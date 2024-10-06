@@ -9,9 +9,6 @@ namespace DbUp.Engine;
 public sealed class DatabaseUpgradeResult
 {
     readonly List<SqlScript> scripts;
-    readonly bool successful;
-    readonly Exception error;
-    readonly SqlScript errorScript;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DatabaseUpgradeResult"/> class.
@@ -20,13 +17,13 @@ public sealed class DatabaseUpgradeResult
     /// <param name="successful">if set to <c>true</c> [successful].</param>
     /// <param name="error">The error.</param>
     /// <param name="errorScript">The script that was executing when the error occurred</param>
-    public DatabaseUpgradeResult(IEnumerable<SqlScript> scripts, bool successful, Exception error, SqlScript errorScript)
+    public DatabaseUpgradeResult(IEnumerable<SqlScript> scripts, bool successful, Exception? error, SqlScript? errorScript)
     {
         this.scripts = new List<SqlScript>();
         this.scripts.AddRange(scripts);
-        this.successful = successful;
-        this.error = error;
-        this.errorScript = errorScript;
+        this.Successful = successful;
+        this.Error = error;
+        this.ErrorScript = errorScript;
     }
 
     /// <summary>
@@ -37,15 +34,15 @@ public sealed class DatabaseUpgradeResult
     /// <summary>
     /// Gets a value indicating whether this <see cref="DatabaseUpgradeResult"/> is successful.
     /// </summary>
-    public bool Successful => successful;
+    public bool Successful { get; }
 
     /// <summary>
     /// Gets the error.
     /// </summary>
-    public Exception Error => error;
+    public Exception? Error { get; }
 
     /// <summary>
     /// Gets the script that was executing when an error occurred.
     /// </summary>
-    public SqlScript ErrorScript => errorScript;
+    public SqlScript? ErrorScript { get; }
 }

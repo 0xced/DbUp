@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Assent;
 using Assent.Namers;
@@ -19,7 +17,6 @@ public abstract class DatabaseSupportTestsBase
     readonly string? parentFilePath;
     readonly IConnectionFactory testConnectionFactory;
     readonly List<SqlScript> scripts = new();
-    readonly RecordingDbConnection recordingConnection;
     readonly CaptureLogsLogger logger = new();
 
     DatabaseUpgradeResult? result;
@@ -29,8 +26,7 @@ public abstract class DatabaseSupportTestsBase
     public DatabaseSupportTestsBase([CallerFilePath] string? parentFilePath = null)
     {
         this.parentFilePath = parentFilePath;
-        testConnectionFactory = new DelegateConnectionFactory(_ => recordingConnection);
-        recordingConnection = new RecordingDbConnection(logger);
+        testConnectionFactory = new DelegateConnectionFactory(_ => new RecordingDbConnection(logger));
     }
 
     protected abstract UpgradeEngineBuilder DeployTo(SupportedDatabases to);
@@ -88,7 +84,7 @@ public abstract class DatabaseSupportTestsBase
 
     void VariableSubstitutionIsSetup()
     {
-        upgradeEngineBuilder.WithVariable("TestVariable", "SubstitutedValue");
+        upgradeEngineBuilder!.WithVariable("TestVariable", "SubstitutedValue");
     }
 
     void JournalTableNameIsCustomised()

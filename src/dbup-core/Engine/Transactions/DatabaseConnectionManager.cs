@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading;
 using DbUp.Engine.Output;
 
 namespace DbUp.Engine.Transactions;
@@ -11,10 +12,10 @@ namespace DbUp.Engine.Transactions;
 public abstract class DatabaseConnectionManager : IConnectionManager
 {
     readonly IConnectionFactory connectionFactory;
-    ITransactionStrategy transactionStrategy;
+    ITransactionStrategy? transactionStrategy;
     readonly Dictionary<TransactionMode, Func<ITransactionStrategy>> transactionStrategyFactory;
-    IDbConnection upgradeConnection;
-    IConnectionFactory connectionFactoryOverride;
+    IDbConnection? upgradeConnection;
+    IConnectionFactory? connectionFactoryOverride;
 
     //The allowed TransactionModes
     protected virtual AllowedTransactionMode AllowedTransactionModes => AllowedTransactionMode.All;
@@ -128,6 +129,9 @@ public abstract class DatabaseConnectionManager : IConnectionManager
     /// <param name="action">The action to execute</param>
     public void ExecuteCommandsWithManagedConnection(Action<Func<IDbCommand>> action)
     {
+        if (transactionStrategy == null)
+            throw new InvalidOperationException($"The {nameof(OperationStarting)} method must be called first.");
+
         transactionStrategy.Execute(action);
     }
 
@@ -139,6 +143,9 @@ public abstract class DatabaseConnectionManager : IConnectionManager
     /// <returns>The result of the command</returns>
     public T ExecuteCommandsWithManagedConnection<T>(Func<Func<IDbCommand>, T> actionWithResult)
     {
+        if (transactionStrategy == null)
+            throw new InvalidOperationException($"The {nameof(OperationStarting)} method must be called first.");
+
         return transactionStrategy.Execute(actionWithResult);
     }
 

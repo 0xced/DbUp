@@ -26,7 +26,7 @@ public class AdHocSqlRunner
     /// <param name="schema">The schema.</param>
     /// <param name="additionalScriptPreprocessors">The additional script preprocessors.</param>
     /// <remarks>Sets the <c>variablesEnabled</c> setting to <c>true</c>.</remarks>
-    public AdHocSqlRunner(Func<IDbCommand> commandFactory, ISqlObjectParser sqlObjectParser, string schema, params IScriptPreprocessor[] additionalScriptPreprocessors)
+    public AdHocSqlRunner(Func<IDbCommand> commandFactory, ISqlObjectParser sqlObjectParser, string? schema, params IScriptPreprocessor[] additionalScriptPreprocessors)
         : this(commandFactory, sqlObjectParser, schema, () => true, additionalScriptPreprocessors)
     {
     }
@@ -38,7 +38,7 @@ public class AdHocSqlRunner
     /// <param name="schema">The schema.</param>
     /// <param name="variablesEnabled">Function indicating <c>true</c> if variables should be replaced, <c>false</c> otherwise.</param>
     /// <param name="additionalScriptPreprocessors">The additional script preprocessors.</param>
-    public AdHocSqlRunner(Func<IDbCommand> commandFactory, ISqlObjectParser sqlObjectParser, string schema, Func<bool> variablesEnabled, params IScriptPreprocessor[] additionalScriptPreprocessors)
+    public AdHocSqlRunner(Func<IDbCommand> commandFactory, ISqlObjectParser sqlObjectParser, string? schema, Func<bool> variablesEnabled, params IScriptPreprocessor[] additionalScriptPreprocessors)
     {
         this.commandFactory = commandFactory;
         this.sqlObjectParser = sqlObjectParser;
@@ -62,7 +62,7 @@ public class AdHocSqlRunner
     /// <summary>
     /// Database Schema, should be null if database does not support schemas
     /// </summary>
-    public string Schema { get; set; }
+    public string? Schema { get; set; }
 
     /// <summary>
     /// Executes a scalar query.
@@ -70,9 +70,9 @@ public class AdHocSqlRunner
     /// <param name="query">The query.</param>
     /// <param name="parameters">The parameters.</param>
     /// <returns></returns>
-    public object ExecuteScalar(string query, params Expression<Func<string, object>>[] parameters)
+    public object? ExecuteScalar(string query, params Expression<Func<string?, object>>[] parameters)
     {
-        object result = null;
+        object? result = null;
         Execute(query, parameters,
             command =>
             {
@@ -87,7 +87,7 @@ public class AdHocSqlRunner
     /// <param name="query">The query.</param>
     /// <param name="parameters">The parameters.</param>
     /// <returns></returns>
-    public int ExecuteNonQuery(string query, params Expression<Func<string, object>>[] parameters)
+    public int ExecuteNonQuery(string query, params Expression<Func<string?, object>>[] parameters)
     {
         var result = 0;
         Execute(query, parameters,
@@ -105,9 +105,9 @@ public class AdHocSqlRunner
     /// <param name="query">The query.</param>
     /// <param name="parameters">The parameters.</param>
     /// <returns></returns>
-    public List<Dictionary<string, string>> ExecuteReader(string query, params Expression<Func<string, object>>[] parameters)
+    public List<Dictionary<string, string?>> ExecuteReader(string query, params Expression<Func<string?, object>>[] parameters)
     {
-        var results = new List<Dictionary<string, string>>();
+        var results = new List<Dictionary<string, string?>>();
         Execute(query, parameters,
             command =>
             {
@@ -115,13 +115,13 @@ public class AdHocSqlRunner
                 {
                     while (reader.Read())
                     {
-                        var line = new Dictionary<string, string>();
+                        var line = new Dictionary<string, string?>();
                         for (var i = 0; i < reader.FieldCount; i++)
                         {
                             var name = reader.GetName(i);
                             var value = reader.GetValue(i);
                             value = (value is null || value == DBNull.Value) ? null : value.ToString();
-                            line.Add(name, (string)value);
+                            line.Add(name, (string?)value);
                         }
 
                         results.Add(line);
@@ -132,7 +132,7 @@ public class AdHocSqlRunner
         return results;
     }
 
-    void Execute(string commandText, IEnumerable<Expression<Func<string, object>>> parameters, Action<IDbCommand> executor)
+    void Execute(string commandText, IEnumerable<Expression<Func<string?, object>>> parameters, Action<IDbCommand> executor)
     {
         commandText = Preprocess(commandText);
         using (var command = commandFactory())
@@ -158,7 +158,7 @@ public class AdHocSqlRunner
         if (string.IsNullOrEmpty(Schema))
             query = new StripSchemaPreprocessor().Process(query);
         if (!string.IsNullOrEmpty(Schema) && !variables.ContainsKey("schema"))
-            variables.Add("schema", sqlObjectParser.QuoteIdentifier(Schema));
+            variables.Add("schema", sqlObjectParser.QuoteIdentifier(Schema!));
         if (variablesEnabled())
             query = new VariableSubstitutionPreprocessor(variables).Process(query);
         query = additionalScriptPreprocessors.Aggregate(query, (current, additionalScriptPreprocessor) => additionalScriptPreprocessor.Process(current));

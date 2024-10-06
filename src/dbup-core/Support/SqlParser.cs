@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace DbUp.Support;
@@ -89,7 +90,7 @@ public abstract class SqlParser : StringReader
             }
             else
             {
-                ReadCharacter(CharacterType.Command, CurrentChar);
+                ReadCharacter?.Invoke(CharacterType.Command, CurrentChar);
             }
         }
 
@@ -101,7 +102,7 @@ public abstract class SqlParser : StringReader
     /// <summary>
     /// Notifies a command has finished reading
     /// </summary>
-    protected event Action CommandEnded;
+    protected event Action? CommandEnded;
 
     /// <summary>
     /// Notifies a character has been read, signaling the current context to the subscriber.
@@ -109,7 +110,7 @@ public abstract class SqlParser : StringReader
     /// While reading a quoted string, subscriber would receive `(CharacterType.QuotedString, 'a')`
     /// </example>
     /// </summary>
-    protected event Action<CharacterType, char> ReadCharacter;
+    protected event Action<CharacterType, char>? ReadCharacter;
 
     /// <summary>
     /// Enables signaling of the `ReadCharacter` event from derived classes
@@ -165,7 +166,7 @@ public abstract class SqlParser : StringReader
         return read;
     }
 
-    public override string ReadLine()
+    public override string? ReadLine()
     {
         var readLine = base.ReadLine();
         if (readLine != null)
@@ -173,7 +174,7 @@ public abstract class SqlParser : StringReader
         return readLine;
     }
 
-    public override string ReadToEnd()
+    public override string? ReadToEnd()
     {
         CurrentIndex = sqlText.Length - 1;
         return base.ReadToEnd();
@@ -243,7 +244,7 @@ public abstract class SqlParser : StringReader
     /// <summary>
     /// Peek at the next character
     /// </summary>
-    protected bool TryPeek(int numberOfCharacters, out string result)
+    protected bool TryPeek(int numberOfCharacters, [MaybeNullWhen(false)] out string result)
     {
         var currentIndex = CurrentIndex;
         if (currentIndex + numberOfCharacters >= sqlText.Length)
@@ -295,7 +296,7 @@ public abstract class SqlParser : StringReader
     /// </summary>
     void ReadQuotedString()
     {
-        ReadCharacter(CharacterType.QuotedString, CurrentChar);
+        ReadCharacter?.Invoke(CharacterType.QuotedString, CurrentChar);
         while (Read() != FailedRead)
         {
             if (IsCustomStatement)
@@ -304,7 +305,7 @@ public abstract class SqlParser : StringReader
                 Read();
             }
 
-            ReadCharacter(CharacterType.QuotedString, CurrentChar);
+            ReadCharacter?.Invoke(CharacterType.QuotedString, CurrentChar);
             if (IsQuote)
             {
                 return;
@@ -317,7 +318,7 @@ public abstract class SqlParser : StringReader
     /// </summary>
     void ReadBracketedText()
     {
-        ReadCharacter(CharacterType.BracketedText, CurrentChar);
+        ReadCharacter?.Invoke(CharacterType.BracketedText, CurrentChar);
         while (Read() != FailedRead)
         {
             if (IsCustomStatement)
@@ -326,7 +327,7 @@ public abstract class SqlParser : StringReader
                 Read();
             }
 
-            ReadCharacter(CharacterType.BracketedText, CurrentChar);
+            ReadCharacter?.Invoke(CharacterType.BracketedText, CurrentChar);
             if (IsEndOfBracketedText)
             {
                 var peekChar = PeekChar();
@@ -335,7 +336,7 @@ public abstract class SqlParser : StringReader
                 if (peekChar == CloseBracketChar)
                 {
                     Read();
-                    ReadCharacter(CharacterType.BracketedText, CurrentChar);
+                    ReadCharacter?.Invoke(CharacterType.BracketedText, CurrentChar);
                 }
                 else
                 {
@@ -351,7 +352,7 @@ public abstract class SqlParser : StringReader
     void ReadDashDashComment()
     {
         // Writes the current dash.
-        ReadCharacter(CharacterType.DashComment, CurrentChar);
+        ReadCharacter?.Invoke(CharacterType.DashComment, CurrentChar);
         // Read until we hit the end of line.
         do
         {
@@ -360,7 +361,7 @@ public abstract class SqlParser : StringReader
                 break;
             }
 
-            ReadCharacter(CharacterType.DashComment, CurrentChar);
+            ReadCharacter?.Invoke(CharacterType.DashComment, CurrentChar);
         } while (!IsEndOfLine);
     }
 
@@ -368,9 +369,9 @@ public abstract class SqlParser : StringReader
     {
         // We have entered this method because we've identified the "/*" pattern.
         // Write both characters here as technically they go together as a token.
-        ReadCharacter(CharacterType.SlashStarComment, CurrentChar);
+        ReadCharacter?.Invoke(CharacterType.SlashStarComment, CurrentChar);
         Read();
-        ReadCharacter(CharacterType.SlashStarComment, CurrentChar);
+        ReadCharacter?.Invoke(CharacterType.SlashStarComment, CurrentChar);
 
         // Read until we find a the ending of the slash star comment,
         // Or a nested slash star comment.
@@ -380,9 +381,9 @@ public abstract class SqlParser : StringReader
             if (IsEndOfSlashStarComment)
             {
                 // Write both characters of the "*/" token immediately then return
-                ReadCharacter(CharacterType.SlashStarComment, CurrentChar);
+                ReadCharacter?.Invoke(CharacterType.SlashStarComment, CurrentChar);
                 Read();
-                ReadCharacter(CharacterType.SlashStarComment, CurrentChar);
+                ReadCharacter?.Invoke(CharacterType.SlashStarComment, CurrentChar);
                 return;
             }
 
@@ -393,7 +394,7 @@ public abstract class SqlParser : StringReader
                 continue;
             }
 
-            ReadCharacter(CharacterType.SlashStarComment, CurrentChar);
+            ReadCharacter?.Invoke(CharacterType.SlashStarComment, CurrentChar);
         }
     }
 
@@ -420,28 +421,28 @@ public abstract class SqlParser : StringReader
         // If it is not a go, add text to buffer and continue
         else if (!char.IsWhiteSpace(peekChar) && DelimiterRequiresWhitespace)
         {
-            ReadCharacter(CharacterType.Command, previousChar);
+            ReadCharacter?.Invoke(CharacterType.Command, previousChar);
 
             foreach (var @char in buffer)
             {
-                ReadCharacter(CharacterType.Command, @char);
+                ReadCharacter?.Invoke(CharacterType.Command, @char);
             }
 
             return false;
         }
 
         // add the first char of the delimiter
-        ReadCharacter(CharacterType.Delimiter, previousChar);
+        ReadCharacter?.Invoke(CharacterType.Delimiter, previousChar);
 
         // add the body of the delimiter
         foreach (var @char in buffer)
         {
-            ReadCharacter(CharacterType.Delimiter, @char);
+            ReadCharacter?.Invoke(CharacterType.Delimiter, @char);
         }
 
         // add the ';' terminator, if present
         if (terminator.HasValue)
-            ReadCharacter(CharacterType.Delimiter, terminator.Value);
+            ReadCharacter?.Invoke(CharacterType.Delimiter, terminator.Value);
 
         return true;
     }

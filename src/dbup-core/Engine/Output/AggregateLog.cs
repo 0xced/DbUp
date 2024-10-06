@@ -6,9 +6,9 @@ namespace DbUp.Engine.Output
 {
     public class AggregateLog : IAggregateLog
     {
-        public AggregateLog(IEnumerable<IUpgradeLog> loggers = null)
+        public AggregateLog(IEnumerable<IUpgradeLog>? loggers = null)
         {
-            this._loggers = (loggers ?? Enumerable.Empty<IUpgradeLog>()).ToList();
+            this._loggers = loggers?.ToList() ?? [];
         }
 
         private readonly List<IUpgradeLog> _loggers;
@@ -50,20 +50,14 @@ namespace DbUp.Engine.Output
         /// <summary>
         /// Logs the message to all loggers.
         /// </summary>
-        /// <typeparam name="IUpgradeLog"></typeparam>
         /// <param name="loggers"></param>
         /// <param name="writeTo"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        static void Log<IUpgradeLog>(IEnumerable<IUpgradeLog> loggers, Action<IUpgradeLog> writeTo)
+        static void Log(List<IUpgradeLog> loggers, Action<IUpgradeLog> writeTo)
         {
             if (writeTo is null)
             {
                 throw new ArgumentNullException(nameof(writeTo));
-            }
-
-            if (loggers?.Any() != true)
-            {
-                return;
             }
 
             foreach (var log in loggers)

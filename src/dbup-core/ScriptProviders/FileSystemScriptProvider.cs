@@ -14,7 +14,7 @@ namespace DbUp.ScriptProviders;
 public class FileSystemScriptProvider : IScriptProvider
 {
     readonly string directoryPath;
-    readonly Func<string, bool> filter;
+    readonly Func<string, bool>? filter;
     readonly Encoding encoding;
     readonly FileSystemScriptOptions options;
     readonly SqlScriptOptions sqlScriptOptions;

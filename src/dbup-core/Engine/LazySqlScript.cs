@@ -8,7 +8,7 @@ namespace DbUp.Engine;
 public class LazySqlScript : SqlScript
 {
     readonly Func<string> contentProvider;
-    string content;
+    string? content;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LazySqlScript"/> class.
@@ -27,7 +27,7 @@ public class LazySqlScript : SqlScript
     /// <param name="sqlScriptOptions">The sql script options.</param>
     /// <param name="contentProvider">The delegate which creates the content at execution time.</param>
     public LazySqlScript(string name, SqlScriptOptions sqlScriptOptions, Func<string> contentProvider)
-        : base(name, null, sqlScriptOptions)
+        : base(name, "", sqlScriptOptions)
     {
         this.contentProvider = contentProvider;
     }
@@ -36,5 +36,5 @@ public class LazySqlScript : SqlScript
     /// Gets the contents of the script.
     /// </summary>
     /// <value></value>
-    public override string Contents => content ?? (content = contentProvider());
+    public override string Contents => content ??= contentProvider();
 }

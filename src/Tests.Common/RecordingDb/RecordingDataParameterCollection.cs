@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Data;
 using DbUp.Engine.Output;
 
@@ -34,7 +33,7 @@ class RecordingDataParameterCollection : IDataParameterCollection
 
     public int Add(object? value)
     {
-        logger.LogInformation("DB Operation: Add parameter to command: {0}", value);
+        logger.LogInformation("DB Operation: Add parameter to command: {0}", value ?? "");
         backingList.Add(value);
         return backingList.Count - 1;
     }

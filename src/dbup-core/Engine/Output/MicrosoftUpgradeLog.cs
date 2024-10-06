@@ -1,7 +1,5 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DbUp.Engine.Output
 {
@@ -10,7 +8,7 @@ namespace DbUp.Engine.Output
     /// </summary>
     public class MicrosoftUpgradeLog : IUpgradeLog
     {
-        public MicrosoftUpgradeLog([NotNull] ILoggerFactory loggerFactory)
+        public MicrosoftUpgradeLog(ILoggerFactory loggerFactory)
         {
             if (loggerFactory == null)
                 throw new ArgumentNullException(nameof(loggerFactory));
@@ -18,7 +16,7 @@ namespace DbUp.Engine.Output
             _logger = loggerFactory.CreateLogger<UpgradeEngine>();
         }
 
-        public MicrosoftUpgradeLog([NotNull] ILogger logger)
+        public MicrosoftUpgradeLog(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

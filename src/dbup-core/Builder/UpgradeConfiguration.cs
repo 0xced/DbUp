@@ -24,7 +24,7 @@ public class UpgradeConfiguration
     /// <summary>
     /// Manages your database connections, allowing you to control the use of transactions and the behaviour of those transactions
     /// </summary>
-    public IConnectionManager ConnectionManager { get; set; }
+    public IConnectionManager ConnectionManager { get; set; } = null!; // Ensure it's not null in the Validate method
 
     /// <summary>
     /// Gets or sets an aggregate logger which captures details about the upgrade.
@@ -32,7 +32,7 @@ public class UpgradeConfiguration
     public IAggregateLog Log
     {
         get => _log;
-        internal set => _log = value ?? new AggregateLog();
+        internal set => _log = value;
     }
 
     private IAggregateLog _log = new AggregateLog();
@@ -62,12 +62,12 @@ public class UpgradeConfiguration
     /// <summary>
     /// Gets or sets the journal, which tracks the scripts that have already been run.
     /// </summary>
-    public IJournal Journal { get; set; }
+    public IJournal Journal { get; set; } = null!; // Ensure it's not null in the Validate method
 
     /// <summary>
     /// Gets or sets the script executor, which runs scripts against the underlying database.
     /// </summary>
-    public IScriptExecutor ScriptExecutor { get; set; }
+    public IScriptExecutor ScriptExecutor { get; set; } = null!; // Ensure it's not null in the Validate method
 
     /// <summary>
     /// Gets or sets the comparer used to sort scripts and match script names against the log of already run scripts.

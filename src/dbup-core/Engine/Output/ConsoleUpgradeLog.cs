@@ -7,7 +7,7 @@ namespace DbUp.Engine.Output;
 /// </summary>
 public class ConsoleUpgradeLog : IUpgradeLog
 {
-    /// <summary>
+    /// <summary/>
     public void LogTrace(string format, params object[] args)
         => Log(LoggingConstants.TraceLevel, ConsoleColor.Gray, format, args);
 
@@ -31,7 +31,7 @@ public class ConsoleUpgradeLog : IUpgradeLog
     public void LogError(Exception ex, string format, params object[] args)
         => Log(LoggingConstants.ErrorLevel, ConsoleColor.Red, format, args, ex);
 
-    static void Log(string level, ConsoleColor color, string format, object[] args, Exception ex = null)
+    static void Log(string level, ConsoleColor color, string format, object[] args, Exception? ex = null)
     {
         var oldColor = Console.ForegroundColor;
         Console.ForegroundColor = color;

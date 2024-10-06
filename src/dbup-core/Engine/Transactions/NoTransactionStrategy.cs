@@ -7,11 +7,14 @@ namespace DbUp.Engine.Transactions;
 
 class NoTransactionStrategy : ITransactionStrategy
 {
-    IDbConnection connection;
+    IDbConnection? connection;
     int? commandTimeout;
 
     public void Execute(Action<Func<IDbCommand>> action)
     {
+        if (connection == null)
+            throw new InvalidOperationException($"The {nameof(Initialise)} method must be called first.");
+
         action(() =>
         {
             var command = connection.CreateCommand();
@@ -26,6 +29,9 @@ class NoTransactionStrategy : ITransactionStrategy
 
     public T Execute<T>(Func<Func<IDbCommand>, T> actionWithResult)
     {
+        if (connection == null)
+            throw new InvalidOperationException($"The {nameof(Initialise)} method must be called first.");
+
         return actionWithResult(() =>
         {
             var command = connection.CreateCommand();

@@ -29,9 +29,10 @@ public abstract class ScriptExecutor : IScriptExecutor
     public int? ExecutionTimeoutSeconds { get; set; }
 
     /// <summary>
-    /// Initializes an instance of the <see cref="SqlScriptExecutor"/> class.
+    /// Initializes an instance of the <see cref="ScriptExecutor"/> class.
     /// </summary>
     /// <param name="connectionManagerFactory"></param>
+    /// <param name="sqlObjectParser"></param>
     /// <param name="log">The logging mechanism.</param>
     /// <param name="schema">The schema that contains the table.</param>
     /// <param name="variablesEnabled">Function that returns <c>true</c> if variables should be replaced, <c>false</c> otherwise.</param>
@@ -39,23 +40,23 @@ public abstract class ScriptExecutor : IScriptExecutor
     /// <param name="journalFactory">Database journal</param>
     public ScriptExecutor(
         Func<IConnectionManager> connectionManagerFactory, ISqlObjectParser sqlObjectParser,
-        Func<IUpgradeLog> log, string schema, Func<bool> variablesEnabled,
+        Func<IUpgradeLog> log, string? schema, Func<bool> variablesEnabled,
         IEnumerable<IScriptPreprocessor> scriptPreprocessors,
         Func<IJournal> journalFactory)
     {
         Schema = schema;
-        Log = log;
-        this.variablesEnabled = variablesEnabled;
-        this.scriptPreprocessors = scriptPreprocessors;
-        this.journalFactory = journalFactory;
-        this.connectionManagerFactory = connectionManagerFactory;
-        this.sqlObjectParser = sqlObjectParser;
+        Log = log ?? throw new ArgumentNullException(nameof(log));
+        this.variablesEnabled = variablesEnabled ?? throw new ArgumentNullException(nameof(variablesEnabled));
+        this.scriptPreprocessors = scriptPreprocessors ?? throw new ArgumentNullException(nameof(scriptPreprocessors));
+        this.journalFactory = journalFactory ?? throw new ArgumentNullException(nameof(journalFactory));
+        this.connectionManagerFactory = connectionManagerFactory ?? throw new ArgumentNullException(nameof(connectionManagerFactory));
+        this.sqlObjectParser = sqlObjectParser ?? throw new ArgumentNullException(nameof(sqlObjectParser));
     }
 
     /// <summary>
     /// Database Schema, should be null if database does not support schemas
     /// </summary>
-    public string Schema { get; set; }
+    public string? Schema { get; set; }
 
     /// <summary>
     /// Executes the specified script against a database at a given connection string.
@@ -76,7 +77,7 @@ public abstract class ScriptExecutor : IScriptExecutor
         connectionManagerFactory().ExecuteCommandsWithManagedConnection(dbCommandFactory =>
         {
             var sqlRunner = new AdHocSqlRunner(dbCommandFactory, sqlObjectParser, Schema, () => true);
-            var sql = GetVerifySchemaSql(Schema);
+            var sql = GetVerifySchemaSql(Schema!);
             sqlRunner.ExecuteNonQuery(sql);
         });
     }
@@ -89,7 +90,7 @@ public abstract class ScriptExecutor : IScriptExecutor
     /// </summary>
     protected virtual bool UseTheSameTransactionForJournalTableAndScripts => true;
 
-    protected virtual string PreprocessScriptContents(SqlScript script, IDictionary<string, string> variables)
+    protected virtual string PreprocessScriptContents(SqlScript script, IDictionary<string, string>? variables)
     {
         if (variables == null)
             variables = new Dictionary<string, string>();
@@ -112,7 +113,7 @@ public abstract class ScriptExecutor : IScriptExecutor
     /// </summary>
     /// <param name="script">The script.</param>
     /// <param name="variables">Variables to replace in the script</param>
-    public virtual void Execute(SqlScript script, IDictionary<string, string> variables)
+    public virtual void Execute(SqlScript script, IDictionary<string, string>? variables)
     {
         var contents = PreprocessScriptContents(script, variables);
         Log().LogInformation("Executing Database Server script '{0}'", script.Name);
@@ -235,15 +236,15 @@ public abstract class ScriptExecutor : IScriptExecutor
                 names.Add(reader.GetName(i));
             }
 
-            var lines = new List<List<string>>();
+            var lines = new List<List<string?>>();
             while (reader.Read())
             {
-                var line = new List<string>();
+                var line = new List<string?>();
                 for (var i = 0; i < reader.FieldCount; i++)
                 {
                     var value = reader.GetValue(i);
                     value = (value is null || value == DBNull.Value) ? null : value.ToString();
-                    line.Add((string)value);
+                    line.Add((string?)value);
                 }
 
                 lines.Add(line);

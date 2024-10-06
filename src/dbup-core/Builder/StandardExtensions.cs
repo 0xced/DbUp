@@ -121,7 +121,7 @@ public static class StandardExtensions
     /// <returns></returns>
     public static UpgradeEngineBuilder ResetConfiguredLoggers(this UpgradeEngineBuilder builder)
     {
-        builder.Configure(c => c.Log = null);
+        builder.Configure(c => c.Log = new AggregateLog());
         return builder;
     }
 

@@ -8,7 +8,7 @@ namespace DbUp.Engine.Output;
 /// </summary>
 public class TraceUpgradeLog : IUpgradeLog
 {
-    /// <summary>
+    /// <summary/>
     public void LogTrace(string format, params object[] args)
         => Log(LoggingConstants.TraceLevel, format, args);
 
@@ -32,22 +32,19 @@ public class TraceUpgradeLog : IUpgradeLog
     public void LogError(Exception ex, string format, params object[] args)
         => Log(LoggingConstants.ErrorLevel, format, args, ex);
 
-    static void Log(string level, string format, object[] args, Exception ex = null)
+    /// <summary>
+    /// Writes a warning message to the log.
+    /// </summary>
+    /// <param name="level">The level.</param>
+    /// <param name="format">The format.</param>
+    /// <param name="args">The args.</param>
+    /// <param name="ex">The exception.</param>
+    static void Log(string level, string format, object[] args, Exception? ex = null)
     {
         Trace.WriteLine($"{DateTimeOffset.Now.ToString(LoggingConstants.TimestampFormat)} [{level}] {string.Format(format, args)}");
         if (ex != null)
-            /// <summary>
-            /// Writes an error message to the log.
-            /// </summary>
-            /// <param name="format">The format.</param>
-            /// <param name="args">The args.</param>
         {
             Trace.WriteLine(ExceptionFormatter.Format(ex));
         }
-        /// <summary>
-        /// Writes a warning message to the log.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="args">The args.</param>
     }
 }
