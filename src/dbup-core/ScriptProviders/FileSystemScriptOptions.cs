@@ -31,7 +31,7 @@ public class FileSystemScriptOptions
     /// The filter to be used for filtering files 
     /// <remarks> Files which does not end by .sql are never considered </remarks>
     /// </summary>
-    public Func<string, bool> Filter { get; set; }
+    public Func<string, bool>? Filter { get; set; }
 
     /// <summary>
     /// The encoding to be used for reading files 

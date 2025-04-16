@@ -111,5 +111,5 @@ public class VariableSubstitutionSqlParser : SqlParser
         }
     }
 
-    event Action<string> ReadVariableName;
+    event Action<string>? ReadVariableName;
 }

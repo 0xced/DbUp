@@ -7,11 +7,14 @@ namespace DbUp.Engine.Transactions;
 
 class TransactionPerScriptStrategy : ITransactionStrategy
 {
-    IDbConnection connection;
+    IDbConnection? connection;
     int? commandTimeout;
 
     public void Execute(Action<Func<IDbCommand>> action)
     {
+        if (connection == null)
+            throw new InvalidOperationException($"The {nameof(Initialise)} method must be called first.");
+
         using (var transaction = connection.BeginTransaction())
         {
             action(() =>
@@ -31,6 +34,9 @@ class TransactionPerScriptStrategy : ITransactionStrategy
 
     public T Execute<T>(Func<Func<IDbCommand>, T> actionWithResult)
     {
+        if (connection == null)
+            throw new InvalidOperationException($"The {nameof(Initialise)} method must be called first.");
+
         using (var transaction = connection.BeginTransaction())
         {
             var result = actionWithResult(() =>

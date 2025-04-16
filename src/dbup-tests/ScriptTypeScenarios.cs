@@ -17,8 +17,7 @@ namespace DbUp.Tests;
 public class ScriptTypeScenarios
 {
     readonly List<SqlScript> scripts;
-    DatabaseUpgradeResult upgradeResult;
-    UpgradeEngine upgradeEngine;
+    DatabaseUpgradeResult? upgradeResult;
     bool isUpgradeRequired;
     readonly TestProvider testProvider;
 
@@ -81,6 +80,7 @@ public class ScriptTypeScenarios
     void AndShouldHaveRunAllScriptsInOrder()
     {
         // Check both results and journal
+        upgradeResult.ShouldNotBeNull();
         upgradeResult.Scripts
             .Select(s => s.Name)
             .ShouldBe(new[] {"Script1.sql", "Script2.sql", "Script3.sql"});
@@ -88,11 +88,13 @@ public class ScriptTypeScenarios
 
     void ThenShouldHaveOnlyRunAlwaysScripts()
     {
+        upgradeResult.ShouldNotBeNull();
         upgradeResult.Scripts.Select(s => s.Name).ShouldBe(new[] {"Script3.sql"});
     }
 
     void ThenShouldHaveSuccessfulResult()
     {
+        upgradeResult.ShouldNotBeNull();
         upgradeResult.Successful.ShouldBeTrue();
     }
 
@@ -107,13 +109,13 @@ public class ScriptTypeScenarios
 
     void WhenCheckIfDatabaseUpgradeIsRequired()
     {
-        upgradeEngine = testProvider.Builder.Build();
+        var upgradeEngine = testProvider.Builder.Build();
         isUpgradeRequired = upgradeEngine.IsUpgradeRequired();
     }
 
     void WhenDatabaseIsUpgraded()
     {
-        upgradeEngine = testProvider.Builder.Build();
+        var upgradeEngine = testProvider.Builder.Build();
         upgradeResult = upgradeEngine.PerformUpgrade();
     }
 

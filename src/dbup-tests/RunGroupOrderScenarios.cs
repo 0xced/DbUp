@@ -16,7 +16,7 @@ namespace DbUp.Tests;
     SoThat = "So that my application's database is up to date")]
 public class RunGroupOrderScenarios
 {
-    DatabaseUpgradeResult result;
+    DatabaseUpgradeResult? result;
     readonly TestProvider testProvider;
 
     public RunGroupOrderScenarios()
@@ -50,6 +50,7 @@ public class RunGroupOrderScenarios
     void AndShouldHaveRunAllScriptsInOrder()
     {
         // Check both results and journal
+        result.ShouldNotBeNull();
         result.Scripts
             .Select(s => s.Name)
             .ShouldBe(new[] {"ZZZScript1.sql", "ZZZScript2.sql", "AAAScript3.sql"});
@@ -57,6 +58,7 @@ public class RunGroupOrderScenarios
 
     void ThenShouldHaveSuccessfulResult()
     {
+        result.ShouldNotBeNull();
         result.Successful.ShouldBeTrue();
     }
 

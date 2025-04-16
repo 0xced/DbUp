@@ -27,7 +27,7 @@ public class CaptureLogsLogger : IUpgradeLog
     }
 
 
-    public void LogInformation(string format, params object[] args)
+    public void LogInformation(string format, params object?[] args)
     {
         var formattedMsg = string.Format(format, args);
         var value = "Info:         " + formattedMsg;
@@ -38,7 +38,7 @@ public class CaptureLogsLogger : IUpgradeLog
         InfoMessages.Add(formattedMsg);
     }
 
-    public void LogWarning(string format, params object[] args)
+    public void LogWarning(string format, params object?[] args)
     {
         var formattedValue = string.Format(format, args);
         var value = "Warn:         " + formattedValue;
@@ -49,7 +49,7 @@ public class CaptureLogsLogger : IUpgradeLog
         WarnMessages.Add(formattedValue);
     }
 
-    public void LogTrace(string format, params object[] args)
+    public void LogTrace(string format, params object?[] args)
     {
         var formattedValue = string.Format(format, args);
         var value = "Trace:         " + formattedValue;
@@ -60,7 +60,7 @@ public class CaptureLogsLogger : IUpgradeLog
         TraceMessages.Add(formattedValue);
     }
 
-    public void LogDebug(string format, params object[] args)
+    public void LogDebug(string format, params object?[] args)
     {
         var formattedValue = string.Format(format, args);
         var value = "Debug:         " + formattedValue;
@@ -71,7 +71,7 @@ public class CaptureLogsLogger : IUpgradeLog
         DebugMessages.Add(formattedValue);
     }
 
-    public void LogError(string format, params object[] args)
+    public void LogError(string format, params object?[] args)
     {
         var formattedMessage = string.Format(format, args);
 
@@ -89,7 +89,7 @@ public class CaptureLogsLogger : IUpgradeLog
         ErrorMessages.Add(formattedMessage);
     }
 
-    public void LogError(Exception ex, string format, params object[] args)
+    public void LogError(Exception ex, string format, params object?[] args)
     {
         var formattedMessage = string.Format(format, args);
         // Remove stack trace information

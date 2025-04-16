@@ -8,30 +8,30 @@ namespace DbUp.Engine.Output;
 public class ConsoleUpgradeLog : IUpgradeLog
 {
     /// <inheritdoc/>
-    public void LogTrace(string format, params object[] args)
+    public void LogTrace(string format, params object?[] args)
         => Log(LoggingConstants.TraceLevel, ConsoleColor.Gray, format, args);
 
     /// <inheritdoc/>
-    public void LogDebug(string format, params object[] args)
+    public void LogDebug(string format, params object?[] args)
         => Log(LoggingConstants.DebugLevel, ConsoleColor.Magenta, format, args);
 
     /// <inheritdoc/>
-    public void LogInformation(string format, params object[] args)
+    public void LogInformation(string format, params object?[] args)
         => Log(LoggingConstants.InfoLevel, ConsoleColor.White, format, args);
 
     /// <inheritdoc/>
-    public void LogWarning(string format, params object[] args)
+    public void LogWarning(string format, params object?[] args)
         => Log(LoggingConstants.WarnLevel, ConsoleColor.Yellow, format, args);
 
     /// <inheritdoc/>
-    public void LogError(string format, params object[] args)
+    public void LogError(string format, params object?[] args)
         => Log(LoggingConstants.ErrorLevel, ConsoleColor.Red, format, args);
 
     /// <inheritdoc/>
-    public void LogError(Exception ex, string format, params object[] args)
+    public void LogError(Exception ex, string format, params object?[] args)
         => Log(LoggingConstants.ErrorLevel, ConsoleColor.Red, format, args, ex);
 
-    static void Log(string level, ConsoleColor color, string format, object[] args, Exception ex = null)
+    static void Log(string level, ConsoleColor color, string format, object?[] args, Exception? ex = null)
     {
         var oldColor = Console.ForegroundColor;
         Console.ForegroundColor = color;

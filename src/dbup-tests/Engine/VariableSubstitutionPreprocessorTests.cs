@@ -10,7 +10,7 @@ namespace DbUp.Tests.Engine;
 public class VariableSubstitutionPreprocessorTests
 {
     readonly TestProvider testProvider = new();
-    DatabaseUpgradeResult result;
+    DatabaseUpgradeResult? result;
 
     void GivenAScript(string contents)
         => testProvider.Builder.WithScript("testscript", contents);
@@ -22,16 +22,25 @@ public class VariableSubstitutionPreprocessorTests
         => result = testProvider.Builder.Build().PerformUpgrade();
 
     void ThenTheUpgradeWasSuccessful()
-        => result.Successful.ShouldBeTrue();
+    {
+        result.ShouldNotBeNull();
+        result.Successful.ShouldBeTrue();
+    }
 
     void ThenTheUpgradeWasUnsuccessful()
-        => result.Successful.ShouldBeFalse();
+    {
+        result.ShouldNotBeNull();
+        result.Successful.ShouldBeFalse();
+    }
 
     void ThenTheCommandWasIssuedWithText(string commandText)
         => testProvider.Log.WriteDbOperations.ShouldContain($"Execute non query command: {commandText}");
 
     void ThenTheErrorWasAnInvalidOperationException()
-        => result.Error.ShouldBeOfType<InvalidOperationException>();
+    {
+        result.ShouldNotBeNull();
+        result.Error.ShouldBeOfType<InvalidOperationException>();
+    }
 
     [Fact]
     public void substitutes_variables_in_body()

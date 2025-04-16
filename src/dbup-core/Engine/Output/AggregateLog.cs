@@ -13,9 +13,9 @@ namespace DbUp.Engine.Output
         /// Initializes a new instance of the <see cref="AggregateLog"/> class.
         /// </summary>
         /// <param name="loggers">The collection of loggers to aggregate.</param>
-        public AggregateLog(IEnumerable<IUpgradeLog> loggers = null)
+        public AggregateLog(IEnumerable<IUpgradeLog>? loggers = null)
         {
-            this._loggers = (loggers ?? Enumerable.Empty<IUpgradeLog>()).ToList();
+            this._loggers = loggers?.ToList() ?? [];
         }
 
         private readonly List<IUpgradeLog> _loggers;
@@ -31,46 +31,40 @@ namespace DbUp.Engine.Output
             => _loggers.Add(logger ?? throw new ArgumentException(nameof(logger)));
 
         /// <inheritdoc/>
-        public void LogTrace(string format, params object[] args)
+        public void LogTrace(string format, params object?[] args)
             => Log(_loggers, x => x.LogTrace(format, args));
 
         /// <inheritdoc/>
-        public void LogDebug(string format, params object[] args)
+        public void LogDebug(string format, params object?[] args)
             => Log(_loggers, x => x.LogDebug(format, args));
 
         /// <inheritdoc/>
-        public void LogInformation(string format, params object[] args)
+        public void LogInformation(string format, params object?[] args)
             => Log(_loggers, x => x.LogInformation(format, args));
 
         /// <inheritdoc/>
-        public void LogWarning(string format, params object[] args)
+        public void LogWarning(string format, params object?[] args)
             => Log(_loggers, x => x.LogWarning(format, args));
 
         /// <inheritdoc/>
-        public void LogError(string format, params object[] args)
+        public void LogError(string format, params object?[] args)
             => Log(_loggers, x => x.LogError(format, args));
 
         /// <inheritdoc/>
-        public void LogError(Exception ex, string format, params object[] args)
+        public void LogError(Exception ex, string format, params object?[] args)
             => Log(_loggers, x => x.LogError(ex, format, args));
 
         /// <summary>
         /// Logs the message to all loggers.
         /// </summary>
-        /// <typeparam name="IUpgradeLog"></typeparam>
         /// <param name="loggers"></param>
         /// <param name="writeTo"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        static void Log<IUpgradeLog>(IEnumerable<IUpgradeLog> loggers, Action<IUpgradeLog> writeTo)
+        static void Log(List<IUpgradeLog> loggers, Action<IUpgradeLog> writeTo)
         {
             if (writeTo is null)
             {
                 throw new ArgumentNullException(nameof(writeTo));
-            }
-
-            if (loggers?.Any() != true)
-            {
-                return;
             }
 
             foreach (var log in loggers)

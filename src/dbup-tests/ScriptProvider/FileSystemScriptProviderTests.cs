@@ -19,20 +19,20 @@ public class FileSystemScriptProviderTests
         [Fact]
         public void it_should_throw_when_empty_options()
         {
-            Should.Throw<ArgumentNullException>(() => { new FileSystemScriptProvider("Whatever", null); });
+            Should.Throw<ArgumentNullException>(() => { new FileSystemScriptProvider("Whatever", null!); });
         }
     }
 
     public class when_returning_scripts_from_a_directory : SpecificationFor<FileSystemScriptProvider>, IDisposable
     {
-        string testPath;
-        IEnumerable<SqlScript> filesToExecute;
+        DirectoryInfo? testDirectory;
+        IEnumerable<SqlScript> filesToExecute = [];
 
         public override FileSystemScriptProvider Given()
         {
-            TestScripts.Create(out testPath);
+            TestScripts.Create(out testDirectory);
 
-            return new FileSystemScriptProvider(testPath);
+            return new FileSystemScriptProvider(testDirectory.FullName);
         }
 
         protected override void When()
@@ -70,23 +70,23 @@ public class FileSystemScriptProviderTests
 
         public void Dispose()
         {
-            Directory.Delete(testPath, true);
+            testDirectory.ShouldNotBeNull();
+            testDirectory.Delete(true);
         }
     }
 
     public class when_returning_scripts_from_a_directory_and_using_a_filter : SpecificationFor<FileSystemScriptProvider>,
         IDisposable
     {
-        string testPath;
-        IEnumerable<SqlScript> filesToExecute;
+        DirectoryInfo? testDirectory;
+        IEnumerable<SqlScript> filesToExecute= [];
         bool filterExecuted;
-        FileSystemScriptOptions options;
 
         public override FileSystemScriptProvider Given()
         {
-            TestScripts.Create(out testPath);
+            TestScripts.Create(out testDirectory);
             // Given a filter is provided..
-            options = new FileSystemScriptOptions()
+            var options = new FileSystemScriptOptions()
             {
                 Filter = (_) =>
                 {
@@ -94,7 +94,7 @@ public class FileSystemScriptProviderTests
                     return true;
                 }
             };
-            return new FileSystemScriptProvider(testPath, options);
+            return new FileSystemScriptProvider(testDirectory.FullName, options);
         }
 
         protected override void When()
@@ -117,20 +117,21 @@ public class FileSystemScriptProviderTests
 
         public void Dispose()
         {
-            Directory.Delete(testPath, true);
+            testDirectory.ShouldNotBeNull();
+            testDirectory.Delete(true);
         }
     }
 
     public class when_returning_scripts_from_a_directory_and_using_subdirectories_option : SpecificationFor<FileSystemScriptProvider>, IDisposable
     {
-        string testPath;
-        IEnumerable<SqlScript> filesToExecute;
+        DirectoryInfo? testDirectory;
+        IEnumerable<SqlScript> filesToExecute = [];
 
         public override FileSystemScriptProvider Given()
         {
-            TestScripts.Create(out testPath);
+            TestScripts.Create(out testDirectory);
             var options = new FileSystemScriptOptions() {IncludeSubDirectories = true};
-            return new FileSystemScriptProvider(testPath, options);
+            return new FileSystemScriptProvider(testDirectory.FullName, options);
         }
 
         protected override void When()
@@ -177,20 +178,21 @@ public class FileSystemScriptProviderTests
 
         public void Dispose()
         {
-            Directory.Delete(testPath, true);
+            testDirectory.ShouldNotBeNull();
+            testDirectory.Delete(true);
         }
     }
 
     public class when_returning_scripts_from_a_directory_and_using_subdirectories_option_without_prefix : SpecificationFor<FileSystemScriptProvider>, IDisposable
     {
-        string testPath;
-        IEnumerable<SqlScript> filesToExecute;
+        DirectoryInfo? testDirectory;
+        IEnumerable<SqlScript> filesToExecute = [];
 
         public override FileSystemScriptProvider Given()
         {
-            TestScripts.Create(out testPath);
+            TestScripts.Create(out testDirectory);
             var options = new FileSystemScriptOptions() {IncludeSubDirectories = true, UseOnlyFilenameForScriptName = true};
-            return new FileSystemScriptProvider(testPath, options);
+            return new FileSystemScriptProvider(testDirectory.FullName, options);
         }
 
         protected override void When()
@@ -237,7 +239,8 @@ public class FileSystemScriptProviderTests
 
         public void Dispose()
         {
-            Directory.Delete(testPath, true);
+            testDirectory.ShouldNotBeNull();
+            testDirectory.Delete(true);
         }
     }
 

@@ -16,8 +16,7 @@ namespace DbUp.Tests;
 public class UpgradeDatabaseScenarios
 {
     readonly List<SqlScript> scripts;
-    DatabaseUpgradeResult upgradeResult;
-    UpgradeEngine upgradeEngine;
+    DatabaseUpgradeResult? upgradeResult;
     bool isUpgradeRequired;
     readonly TestProvider testProvider;
 
@@ -108,6 +107,7 @@ public class UpgradeDatabaseScenarios
 
     void AndShouldHaveFailedResult()
     {
+        upgradeResult.ShouldNotBeNull();
         upgradeResult.Successful.ShouldBeFalse("Upgrade should not be successful");
     }
 
@@ -126,6 +126,8 @@ public class UpgradeDatabaseScenarios
 
     void AndScriptThatErroredIsRecorded()
     {
+        upgradeResult.ShouldNotBeNull();
+        upgradeResult.ErrorScript.ShouldNotBeNull();
         upgradeResult.ErrorScript.Name.ShouldContain("ScriptWithError.sql");
     }
 
@@ -138,6 +140,7 @@ public class UpgradeDatabaseScenarios
     void AndShouldHaveRunAllScriptsInOrder()
     {
         // Check both results and journal
+        upgradeResult.ShouldNotBeNull();
         upgradeResult.Scripts
             .Select(s => s.Name)
             .ShouldBe(new[] {"Script1.sql", "Script2.sql", "Script3.sql"});
@@ -145,11 +148,13 @@ public class UpgradeDatabaseScenarios
 
     void ThenShouldNotRunAnyScripts()
     {
+        upgradeResult.ShouldNotBeNull();
         upgradeResult.Scripts.ShouldBeEmpty();
     }
 
     void ThenShouldHaveSuccessfulResult()
     {
+        upgradeResult.ShouldNotBeNull();
         upgradeResult.Successful.ShouldBeTrue();
     }
 
@@ -164,13 +169,13 @@ public class UpgradeDatabaseScenarios
 
     void WhenCheckIfDatabaseUpgradeIsRequired()
     {
-        upgradeEngine = testProvider.Builder.Build();
+        var upgradeEngine = testProvider.Builder.Build();
         isUpgradeRequired = upgradeEngine.IsUpgradeRequired();
     }
 
     void WhenDatabaseIsUpgraded()
     {
-        upgradeEngine = testProvider.Builder.Build();
+        var upgradeEngine = testProvider.Builder.Build();
         upgradeResult = upgradeEngine.PerformUpgrade();
     }
 

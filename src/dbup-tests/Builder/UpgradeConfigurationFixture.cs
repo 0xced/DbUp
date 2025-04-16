@@ -55,16 +55,16 @@ public class UpgradeConfigurationFixture
     {
         public bool WasWritten { get; private set; }
 
-        public void LogInformation(string format, params object[] args) => WasWritten = true;
+        public void LogInformation(string format, params object?[] args) => WasWritten = true;
 
-        public void LogError(string format, params object[] args) => WasWritten = true;
+        public void LogError(string format, params object?[] args) => WasWritten = true;
 
-        public void LogWarning(string format, params object[] args) => WasWritten = true;
+        public void LogWarning(string format, params object?[] args) => WasWritten = true;
 
-        public void LogTrace(string format, params object[] args) => WasWritten = true;
+        public void LogTrace(string format, params object?[] args) => WasWritten = true;
 
-        public void LogDebug(string format, params object[] args) => WasWritten = true;
+        public void LogDebug(string format, params object?[] args) => WasWritten = true;
 
-        public void LogError(Exception ex, string format, params object[] args) => WasWritten = true;
+        public void LogError(Exception ex, string format, params object?[] args) => WasWritten = true;
     }
 }

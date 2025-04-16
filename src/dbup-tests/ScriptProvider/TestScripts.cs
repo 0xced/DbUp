@@ -7,25 +7,22 @@ namespace DbUp.Tests.ScriptProvider;
 
 static class TestScripts
 {
-    public static void Create(out string testPath)
+    public static void Create(out DirectoryInfo testDirectory)
     {
         var assembly = typeof(TestScripts).GetTypeInfo().Assembly;
-        testPath = CreateTestPathBasedOnAssemblyLocation(assembly);
+        testDirectory = CreateTestPathBasedOnAssemblyLocation(assembly);
 
         foreach (var scriptName in assembly.GetManifestResourceNames().Where(f => f.Contains(".sql")))
         {
-            using (var stream = assembly.GetManifestResourceStream(scriptName))
+            using (var stream = assembly.GetManifestResourceStream(scriptName) ?? throw new FileNotFoundException($"Can't find {scriptName} in {assembly}"))
             {
-                var filePath = Path.Combine(testPath, GetScriptPathAndName(scriptName));
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                var filePath = Path.Combine(testDirectory.FullName, GetScriptPathAndName(scriptName));
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath) ?? throw new DirectoryNotFoundException($"Can't get directory of {filePath}"));
                 using (var writer = new FileStream(filePath, FileMode.Create))
                 {
                     stream.CopyTo(writer);
                     writer.Flush();
-                    writer.Dispose();
                 }
-
-                stream.Dispose();
             }
         }
     }
@@ -41,11 +38,12 @@ static class TestScripts
         return scriptName;
     }
 
-    static string CreateTestPathBasedOnAssemblyLocation(Assembly assembly)
+    static DirectoryInfo CreateTestPathBasedOnAssemblyLocation(Assembly assembly)
     {
-        var directory = new FileInfo(assembly.Location).DirectoryName;
+        var directory = new FileInfo(assembly.Location).DirectoryName ?? throw new DirectoryNotFoundException($"Can't get directory of {assembly.Location}");
         var testPath = Path.Combine(directory, "sqlfiles");
-        Directory.CreateDirectory(testPath);
-        return testPath;
+        var testDirectory = new DirectoryInfo(testPath);
+        testDirectory.Create();
+        return testDirectory;
     }
 }

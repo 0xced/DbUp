@@ -144,9 +144,9 @@ namespace DbUp.Engine
 {
     public sealed class DatabaseUpgradeResult
     {
-        public DatabaseUpgradeResult(System.Collections.Generic.IEnumerable<DbUp.Engine.SqlScript> scripts, bool successful, System.Exception error, DbUp.Engine.SqlScript errorScript) { }
-        public System.Exception Error { get; }
-        public DbUp.Engine.SqlScript ErrorScript { get; }
+        public DatabaseUpgradeResult(System.Collections.Generic.IEnumerable<DbUp.Engine.SqlScript> scripts, bool successful, System.Exception? error, DbUp.Engine.SqlScript? errorScript) { }
+        public System.Exception? Error { get; }
+        public DbUp.Engine.SqlScript? ErrorScript { get; }
         public System.Collections.Generic.IEnumerable<DbUp.Engine.SqlScript> Scripts { get; }
         public bool Successful { get; }
     }
@@ -222,7 +222,7 @@ namespace DbUp.Engine
     {
         protected readonly DbUp.Builder.UpgradeConfiguration configuration;
         public UpgradeEngine(DbUp.Builder.UpgradeConfiguration configuration) { }
-        public event System.EventHandler ScriptExecuted;
+        public event System.EventHandler? ScriptExecuted;
         public virtual System.Collections.Generic.List<DbUp.Engine.SqlScript> GetDiscoveredScripts() { }
         public virtual System.Collections.Generic.List<string> GetExecutedButNotDiscoveredScripts() { }
         public virtual System.Collections.Generic.List<string> GetExecutedScripts() { }
@@ -247,26 +247,26 @@ namespace DbUp.Engine.Output
 {
     public class AggregateLog : DbUp.Engine.Output.IAggregateLog, DbUp.Engine.Output.IUpgradeLog
     {
-        public AggregateLog(System.Collections.Generic.IEnumerable<DbUp.Engine.Output.IUpgradeLog> loggers = null) { }
+        public AggregateLog(System.Collections.Generic.IEnumerable<DbUp.Engine.Output.IUpgradeLog>? loggers = null) { }
         public bool HasLoggers { get; }
         public int LoggerCount { get; }
         public void AddLogger(DbUp.Engine.Output.IUpgradeLog logger) { }
-        public void LogDebug(string format, params object[] args) { }
-        public void LogError(string format, params object[] args) { }
-        public void LogError(System.Exception ex, string format, params object[] args) { }
-        public void LogInformation(string format, params object[] args) { }
-        public void LogTrace(string format, params object[] args) { }
-        public void LogWarning(string format, params object[] args) { }
+        public void LogDebug(string format, params object?[] args) { }
+        public void LogError(string format, params object?[] args) { }
+        public void LogError(System.Exception ex, string format, params object?[] args) { }
+        public void LogInformation(string format, params object?[] args) { }
+        public void LogTrace(string format, params object?[] args) { }
+        public void LogWarning(string format, params object?[] args) { }
     }
     public class ConsoleUpgradeLog : DbUp.Engine.Output.IUpgradeLog
     {
         public ConsoleUpgradeLog() { }
-        public void LogDebug(string format, params object[] args) { }
-        public void LogError(string format, params object[] args) { }
-        public void LogError(System.Exception ex, string format, params object[] args) { }
-        public void LogInformation(string format, params object[] args) { }
-        public void LogTrace(string format, params object[] args) { }
-        public void LogWarning(string format, params object[] args) { }
+        public void LogDebug(string format, params object?[] args) { }
+        public void LogError(string format, params object?[] args) { }
+        public void LogError(System.Exception ex, string format, params object?[] args) { }
+        public void LogInformation(string format, params object?[] args) { }
+        public void LogTrace(string format, params object?[] args) { }
+        public void LogWarning(string format, params object?[] args) { }
     }
     public class ExceptionFormatter
     {
@@ -282,23 +282,23 @@ namespace DbUp.Engine.Output
     }
     public interface IUpgradeLog
     {
-        void LogDebug(string format, params object[] args);
-        void LogError(string format, params object[] args);
-        void LogError(System.Exception ex, string format, params object[] args);
-        void LogInformation(string format, params object[] args);
-        void LogTrace(string format, params object[] args);
-        void LogWarning(string format, params object[] args);
+        void LogDebug(string format, params object?[] args);
+        void LogError(string format, params object?[] args);
+        void LogError(System.Exception ex, string format, params object?[] args);
+        void LogInformation(string format, params object?[] args);
+        void LogTrace(string format, params object?[] args);
+        void LogWarning(string format, params object?[] args);
     }
     public class MicrosoftUpgradeLog : DbUp.Engine.Output.IUpgradeLog
     {
         public MicrosoftUpgradeLog(Microsoft.Extensions.Logging.ILogger logger) { }
         public MicrosoftUpgradeLog(Microsoft.Extensions.Logging.ILoggerFactory loggerFactory) { }
-        public void LogDebug(string message, params object[] args) { }
-        public void LogError(string message, params object[] args) { }
-        public void LogError(System.Exception ex, string message, params object[] args) { }
-        public void LogInformation(string message, params object[] args) { }
-        public void LogTrace(string message, params object[] args) { }
-        public void LogWarning(string message, params object[] args) { }
+        public void LogDebug(string message, params object?[] args) { }
+        public void LogError(string message, params object?[] args) { }
+        public void LogError(System.Exception ex, string message, params object?[] args) { }
+        public void LogInformation(string message, params object?[] args) { }
+        public void LogTrace(string message, params object?[] args) { }
+        public void LogWarning(string message, params object?[] args) { }
     }
     public class NoOpUpgradeLog : DbUp.Engine.Output.MicrosoftUpgradeLog
     {
@@ -307,12 +307,12 @@ namespace DbUp.Engine.Output
     public class TraceUpgradeLog : DbUp.Engine.Output.IUpgradeLog
     {
         public TraceUpgradeLog() { }
-        public void LogDebug(string format, params object[] args) { }
-        public void LogError(string format, params object[] args) { }
-        public void LogError(System.Exception ex, string format, params object[] args) { }
-        public void LogInformation(string format, params object[] args) { }
-        public void LogTrace(string format, params object[] args) { }
-        public void LogWarning(string format, params object[] args) { }
+        public void LogDebug(string format, params object?[] args) { }
+        public void LogError(string format, params object?[] args) { }
+        public void LogError(System.Exception ex, string format, params object?[] args) { }
+        public void LogInformation(string format, params object?[] args) { }
+        public void LogTrace(string format, params object?[] args) { }
+        public void LogWarning(string format, params object?[] args) { }
     }
 }
 namespace DbUp.Engine.Preprocessors
@@ -403,12 +403,12 @@ namespace DbUp.Helpers
 {
     public class AdHocSqlRunner
     {
-        public AdHocSqlRunner(System.Func<System.Data.IDbCommand> commandFactory, DbUp.Engine.ISqlObjectParser sqlObjectParser, string schema, params DbUp.Engine.IScriptPreprocessor[] additionalScriptPreprocessors) { }
-        public AdHocSqlRunner(System.Func<System.Data.IDbCommand> commandFactory, DbUp.Engine.ISqlObjectParser sqlObjectParser, string schema, System.Func<bool> variablesEnabled, params DbUp.Engine.IScriptPreprocessor[] additionalScriptPreprocessors) { }
-        public string Schema { get; set; }
-        public int ExecuteNonQuery(string query, params System.Linq.Expressions.Expression<System.Func<string, object>>[] parameters) { }
-        public System.Collections.Generic.List<System.Collections.Generic.Dictionary<string, string>> ExecuteReader(string query, params System.Linq.Expressions.Expression<System.Func<string, object>>[] parameters) { }
-        public object ExecuteScalar(string query, params System.Linq.Expressions.Expression<System.Func<string, object>>[] parameters) { }
+        public AdHocSqlRunner(System.Func<System.Data.IDbCommand> commandFactory, DbUp.Engine.ISqlObjectParser sqlObjectParser, string? schema, params DbUp.Engine.IScriptPreprocessor[] additionalScriptPreprocessors) { }
+        public AdHocSqlRunner(System.Func<System.Data.IDbCommand> commandFactory, DbUp.Engine.ISqlObjectParser sqlObjectParser, string? schema, System.Func<bool> variablesEnabled, params DbUp.Engine.IScriptPreprocessor[] additionalScriptPreprocessors) { }
+        public string? Schema { get; set; }
+        public int ExecuteNonQuery(string query, params System.Linq.Expressions.Expression<System.Func<string?, object>>[] parameters) { }
+        public System.Collections.Generic.List<System.Collections.Generic.Dictionary<string, string?>> ExecuteReader(string query, params System.Linq.Expressions.Expression<System.Func<string?, object>>[] parameters) { }
+        public object? ExecuteScalar(string query, params System.Linq.Expressions.Expression<System.Func<string?, object>>[] parameters) { }
         public DbUp.Helpers.AdHocSqlRunner WithVariable(string variableName, string value) { }
     }
     public class NullJournal : DbUp.Engine.IJournal
@@ -451,7 +451,7 @@ namespace DbUp.ScriptProviders
         public FileSystemScriptOptions() { }
         public System.Text.Encoding Encoding { get; set; }
         public string[] Extensions { get; set; }
-        public System.Func<string, bool> Filter { get; set; }
+        public System.Func<string, bool>? Filter { get; set; }
         public bool IncludeSubDirectories { get; set; }
         public bool UseOnlyFilenameForScriptName { get; set; }
     }
@@ -477,18 +477,18 @@ namespace DbUp.Support
     }
     public abstract class ScriptExecutor : DbUp.Engine.IScriptExecutor
     {
-        public ScriptExecutor(System.Func<DbUp.Engine.Transactions.IConnectionManager> connectionManagerFactory, DbUp.Engine.ISqlObjectParser sqlObjectParser, System.Func<DbUp.Engine.Output.IUpgradeLog> log, string schema, System.Func<bool> variablesEnabled, System.Collections.Generic.IEnumerable<DbUp.Engine.IScriptPreprocessor> scriptPreprocessors, System.Func<DbUp.Engine.IJournal> journalFactory) { }
+        public ScriptExecutor(System.Func<DbUp.Engine.Transactions.IConnectionManager> connectionManagerFactory, DbUp.Engine.ISqlObjectParser sqlObjectParser, System.Func<DbUp.Engine.Output.IUpgradeLog> log, string? schema, System.Func<bool> variablesEnabled, System.Collections.Generic.IEnumerable<DbUp.Engine.IScriptPreprocessor> scriptPreprocessors, System.Func<DbUp.Engine.IJournal> journalFactory) { }
         public int? ExecutionTimeoutSeconds { get; set; }
         protected System.Func<DbUp.Engine.Output.IUpgradeLog> Log { get; }
-        public string Schema { get; set; }
+        public string? Schema { get; set; }
         protected virtual bool UseTheSameTransactionForJournalTableAndScripts { get; }
         public virtual void Execute(DbUp.Engine.SqlScript script) { }
-        public virtual void Execute(DbUp.Engine.SqlScript script, System.Collections.Generic.IDictionary<string, string> variables) { }
+        public virtual void Execute(DbUp.Engine.SqlScript script, System.Collections.Generic.IDictionary<string, string>? variables) { }
         protected virtual void ExecuteAndLogOutput(System.Data.IDbCommand command) { }
         protected abstract void ExecuteCommandsWithinExceptionHandler(int index, DbUp.Engine.SqlScript script, System.Action executeCallback);
         protected virtual void ExecuteNonQuery(System.Data.IDbCommand command) { }
         protected abstract string GetVerifySchemaSql(string schema);
-        protected virtual string PreprocessScriptContents(DbUp.Engine.SqlScript script, System.Collections.Generic.IDictionary<string, string> variables) { }
+        protected virtual string PreprocessScriptContents(DbUp.Engine.SqlScript script, System.Collections.Generic.IDictionary<string, string>? variables) { }
         protected string QuoteSqlObjectName(string objectName) { }
         public void VerifySchema() { }
         protected virtual void WriteReaderToLog(System.Data.IDataReader reader) { }
@@ -537,8 +537,8 @@ namespace DbUp.Support
         protected bool IsQuote { get; }
         protected bool IsWhiteSpace { get; }
         protected char LastChar { get; }
-        protected event System.Action CommandEnded;
-        protected event System.Action<DbUp.Support.SqlParser.CharacterType, char> ReadCharacter;
+        protected event System.Action? CommandEnded;
+        protected event System.Action<DbUp.Support.SqlParser.CharacterType, char>? ReadCharacter;
         protected bool IsCharEqualTo(char comparisonChar, char compareTo) { }
         protected bool IsCurrentCharEqualTo(char comparisonChar) { }
         protected bool IsLastCharEqualTo(char comparisonChar) { }
@@ -549,9 +549,9 @@ namespace DbUp.Support
         public override int Read(char[] buffer, int index, int count) { }
         public override int ReadBlock(char[] buffer, int index, int count) { }
         protected virtual void ReadCustomStatement() { }
-        public override string ReadLine() { }
-        public override string ReadToEnd() { }
-        protected bool TryPeek(int numberOfCharacters, out string result) { }
+        public override string? ReadLine() { }
+        public override string? ReadToEnd() { }
+        protected bool TryPeek(int numberOfCharacters, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out string result) { }
         public enum CharacterType
         {
             Command = 0,

@@ -27,7 +27,7 @@ public class UpgradeEngine
     /// <summary>
     /// An event that is raised after each script is executed.
     /// </summary>
-    public event EventHandler ScriptExecuted;
+    public event EventHandler? ScriptExecuted;
 
     /// <summary>
     /// Invokes the <see cref="ScriptExecuted"/> event; called whenever a script is executed.
@@ -63,7 +63,7 @@ public class UpgradeEngine
     {
         var executed = new List<SqlScript>();
 
-        SqlScript executedScript = null;
+        SqlScript? executedScript = null;
         try
         {
             using (configuration.ConnectionManager.OperationStarting(configuration.Log, executed))
@@ -187,7 +187,7 @@ public class UpgradeEngine
     public virtual DatabaseUpgradeResult MarkAsExecuted()
     {
         var marked = new List<SqlScript>();
-        SqlScript executedScript = null;
+        SqlScript? executedScript = null;
         using (configuration.ConnectionManager.OperationStarting(configuration.Log, marked))
         {
             try
@@ -222,7 +222,7 @@ public class UpgradeEngine
     public virtual DatabaseUpgradeResult MarkAsExecuted(string latestScript)
     {
         var marked = new List<SqlScript>();
-        SqlScript executedScript = null;
+        SqlScript? executedScript = null;
         using (configuration.ConnectionManager.OperationStarting(configuration.Log, marked))
         {
             try

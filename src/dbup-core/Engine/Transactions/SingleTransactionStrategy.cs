@@ -7,16 +7,18 @@ namespace DbUp.Engine.Transactions;
 
 class SingleTransactionStrategy : ITransactionStrategy
 {
-    IDbConnection connection;
+    IDbConnection? connection;
     int? commandTimeout;
-    IDbTransaction transaction;
+    IDbTransaction? transaction;
     bool errorOccured;
-    IUpgradeLog log;
-    SqlScript[] executedScriptsListBeforeExecution;
-    List<SqlScript> executedScriptsCollection;
+    IUpgradeLog? log;
+    SqlScript[]? executedScriptsListBeforeExecution;
+    List<SqlScript>? executedScriptsCollection;
 
     public void Execute(Action<Func<IDbCommand>> action)
     {
+        if (connection == null)
+            throw new InvalidOperationException($"The {nameof(Initialise)} method must be called first.");
         if (errorOccured)
             throw new InvalidOperationException("Error occured on previous script execution");
 
@@ -43,6 +45,8 @@ class SingleTransactionStrategy : ITransactionStrategy
 
     public T Execute<T>(Func<Func<IDbCommand>, T> actionWithResult)
     {
+        if (connection == null)
+            throw new InvalidOperationException($"The {nameof(Initialise)} method must be called first.");
         if (errorOccured)
             throw new InvalidOperationException("Error occurred on previous script execution");
 
@@ -87,16 +91,16 @@ class SingleTransactionStrategy : ITransactionStrategy
     {
         if (!errorOccured)
         {
-            transaction.Commit();
+            transaction?.Commit();
         }
         else
         {
-            log.LogWarning("Error occured when executing scripts, transaction will be rolled back");
+            log?.LogWarning("Error occured when executing scripts, transaction will be rolled back");
             //Restore the executed scripts collection
-            executedScriptsCollection.Clear();
-            executedScriptsCollection.AddRange(executedScriptsListBeforeExecution);
+            executedScriptsCollection?.Clear();
+            executedScriptsCollection?.AddRange(executedScriptsListBeforeExecution ?? []);
         }
 
-        transaction.Dispose();
+        transaction?.Dispose();
     }
 }

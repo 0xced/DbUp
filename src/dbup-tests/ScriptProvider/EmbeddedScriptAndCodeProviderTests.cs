@@ -16,7 +16,7 @@ public class EmbeddedScriptAndCodeProviderTests
 {
     public class when_no_specific_filter_is_set : SpecificationFor<EmbeddedScriptAndCodeProvider>
     {
-        SqlScript[] scriptsToExecute;
+        SqlScript[] scriptsToExecute = [];
 
         public override EmbeddedScriptAndCodeProvider Given()
         {
@@ -60,7 +60,7 @@ public class EmbeddedScriptAndCodeProviderTests
 
     public class when_a_specific_filter_is_set : SpecificationFor<EmbeddedScriptAndCodeProvider>
     {
-        SqlScript[] scriptsToExecute;
+        SqlScript[] scriptsToExecute = [];
 
         public override EmbeddedScriptAndCodeProvider Given()
         {
